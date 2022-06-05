@@ -10,7 +10,7 @@
 ```
 // 若拉取失败，一般为 提交文件 与 服务器文件 存在冲突，需要手动解决冲突
 
-# 查看所有差异文件
+# 查看文件状态
 git status
 
 # 取消添加到暂存区 ——> 不会被提交
@@ -33,6 +33,13 @@ git commit -m "commit message"
 
 # push到远程仓库
 git push
+
+# 更改编码
+git config --global core.quotepath false
+git config --global gui.encoding utf-8
+git config --global i18n.commitencoding utf-8
+git config --global i18n.logoutputencoding utf-8
+export LESSCHARSET=utf-8
 ```
 
 
