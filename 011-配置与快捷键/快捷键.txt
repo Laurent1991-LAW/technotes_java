@@ -13,6 +13,8 @@ shift + alt + F12	查看类结构structure
 
 ctrl + alt + 左/右	跳到上/下一个操作位置
 
+ctrl + alt + o	快速删除无用的import
+
 
 -------------ECLIPSE-------------------------
 

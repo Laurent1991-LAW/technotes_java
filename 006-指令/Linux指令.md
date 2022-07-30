@@ -1,8 +1,4 @@
-Linux指令
-
-
-
-# 17 Linux端部署
+# Linux指令
 
 # 1 前言
 
@@ -111,7 +107,7 @@ rm -rf 目录名		直接递归删除目录下所有内容（带-r都与文件夹
 
 rm -rf * 			删除所有文件
 
-rm -rf /* 		删除所有子目录所有文件及下属文件（"/"都是指根目录下）
+rm -rf /* 		【慎用！删光所有能删的！】删除所有子目录所有文件及下属文件（"/"都是指根目录下）
 
 ## 复制与移动
 
@@ -146,7 +142,7 @@ mv n.txt m.txt  修改文件名称
 
 1. ping [www.baidu.com](http://www.baidu.com) 测试链接  ctrl+c停止
 2. yum  install mariadb-server   ——安装mariadb数据库（yum近似应用商店）
-3. yum  clean   all  	——若出错则全删再安装
+	. yum  clean   all  	——若出错则全删再安装
 4. 命令:
 
 ​                  ![img](https://docimg8.docs.qq.com/image/5D2SoWMszRkbbR73Cp4fsA.png?w=497&h=117)         
@@ -154,7 +150,7 @@ mv n.txt m.txt  修改文件名称
 注意 : 启动之后设定开机自启
 
 1. 数据库初始化操作 : mysql_secure_installation (设定密码，其他一律Y)
-2. mysql -u root -p	（登录）
+	. mysql -u root -p	（登录）
 3. 更改权限 : 找到 mysql / user 表 => 将localhost改为%
 
 ​                  ![img](https://docimg6.docs.qq.com/image/Mjw5mSKJHuhoT0F4woXanw.png?w=599&h=386)         登录成功后，找到所有库show databases ;
@@ -174,8 +170,8 @@ mv n.txt m.txt  修改文件名称
 src目录下:
 
 1. firewall-cmd --state  查看状态
-2. systemctl disable firewalld.service		未来关闭防火墙的服务（查看状态依旧为running）
-3. systemctl stop firewalld.service	关闭当前防火墙
+	. systemctl disable firewalld.service		未来关闭防火墙的服务（查看状态依旧为running）
+	. systemctl stop firewalld.service	关闭当前防火墙
 
 至此，可以通过windows数据库远程连接上Linux数据库
 
@@ -230,9 +226,9 @@ export CLASSPATH=.:$JAVA_HOME/lib
 ### JAVA日志查看
 
 - vim 8091.log		通过:wq退出，但该命令多用于修改文件
-- cat 8091.log		瞄一眼，但log经常非常长，所以使用tail比较好
-- tail -10 8091.log  		显示文件后10行
-- tail -f 8091.log  		动态查看
+	 cat 8091.log		瞄一眼，但log经常非常长，所以使用tail比较好
+	 tail -10 8091.log  		显示文件后10行
+	 tail -f 8091.log  		动态查看
 
 例如：
 
@@ -286,7 +282,7 @@ ps -ef  |  grep java   查找java程序的运行信息，包含PID
 4. 删除压缩包文件，将解压出的文件夹利用mv命令改名为nginx-source ;
 5. 进入Nginx根目录下，依次输入以下三行命令 :
 
-./configure	=>		make	=>		make install
+	/configure	=>		make	=>		make install
 
 1. 利用whereis nginx找到nginx文件所在地（一般在local里与src平级），进入nginx/sbin，输入相关指令 :
 
