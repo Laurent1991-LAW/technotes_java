@@ -229,25 +229,25 @@ public class OrderServiceImpl {
 
 ### 1.3 事务失效场景
 
-- @Transactional 应用在**非 public 修饰的方法上** --> spring事务本身是通过cglib代理实现的，代理类是委托类的子类, 非公开的方法将无法在代理类中应用
-- @Transactional 注解属性 propagation 设置错误
-- @Transactional 注解属性 rollbackFor 设置错误
-- 同一个类中方法调用，导致@Transactional失效
-- 异常被catch捕获导致@Transactional失效, 解决办法：在catch语句中抛出异常
+- 在A方法中调用添加了@Transactional的B方法，导致事务失效；
+- 异常被catch捕获导致@Transactional失效, 解决办法：在catch语句中抛出异常；
+- @Transactional 应用在**非 public 修饰的方法上** --> spring事务本身是通过cglib代理实现的，代理类是委托类的子类, 非公开的方法将无法在代理类中应用；
+- @Transactional 注解属性 propagation 设置错误；
+- @Transactional 注解属性 rollbackFor 设置错误；
 
 
 
-**阿里巴巴规范：**需要在@Transactional指定rollbackfor或者在方法中显式的rollback
+**阿里巴巴规范：**需要在@Transactional指定rollbackfor，或者在方法中显式的rollback
 
 
 
-如果不对运行时异常进行处理，那么出现运行时异常之后，要么是线程中止，要么是主程序终止 ;
+如果不对 运行时异常 进行处理，那么出现 运行时异常 之后，要么是线程中止，要么是主程序终止 ;
 
 如果不想终止处理线程，则必须捕获所有的运行时异常，
 
 队列里面出现异常数据了，正常的处理应该是把异常数据舍弃，然后记录日志。不应该由于异常数据而影响下面对正常数据的处理。
 
-非运行时异常是RuntimeException以外的异常，类型上都属于Exception类及其子类。如 IOException、SQLException等以及用户自定义的Exception异常。对于这种异常，JAVA编译器强制要求我们必需对出现的这些异常进行catch并处理，否则程序就不能编译通过。
+非运行时异常 是 RuntimeException以外的异常，类型上都属于Exception类及其子类。如 IOException、SQLException等以及用户自定义的Exception异常。对于这种异常，JAVA编译器强制要求我们必需对出现的这些异常进行catch并处理，否则程序就不能编译通过。
 
  1 希望checked异常也回滚：在整个方法前加上 @Transactional (rollbackFor = Exception.class)
 

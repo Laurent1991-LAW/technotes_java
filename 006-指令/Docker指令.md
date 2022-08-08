@@ -47,7 +47,7 @@ sentinel:8镜像名
 
 docker ps	——查看docker运行中的容器
 
-docker ps -a			——查看所有容器
+docker ps -a / --all			——查看所有容器
 
 docker container logs 802		——查看容器日志（启动了，PS看不到=>查看日志）
 

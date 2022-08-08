@@ -138,7 +138,59 @@ mv n.txt m.txt  修改文件名称
 1. 消除数据库权限 ;
 2. 关闭防火墙 ;
 
-##  01数据库安装与权限修改
+
+
+## 00 JAVA8安装及环境变量配置
+
+将 jdk-8u212-linux-x64.tar.gz 上传至/root文件
+
+```unix
+# 将jdk解压到 /usr/local/ 目录, -C为指定解压目录
+tar -xf jdk-8u212-linux-x64.tar.gz -C /usr/local/
+
+# 切换到 /usr/local/ 目录, 显示列表, 查看解压缩的jdk目录
+cd /usr/local
+
+# 修改 /etc/profile 配置文件, 配置环境变量
+vim /etc/profile
+
+# 在文件末尾添加以下内容:
+export JAVA_HOME=/usr/local/jdk1.8.0_212
+export PATH=$JAVA_HOME/bin:$PATH
+
+# 使环境变量立即生效
+source /etc/profile
+
+# 验证
+java -version
+```
+
+
+
+#### rocketMQ安装及环境变量配置
+
+```
+# 下载rocketMQ二进制zip文件
+wget --no-check-certificate https://dlcdn.apache.org/rocketmq/4.9.2/rocketmq-all-4.9.2-bin-release.zip
+
+# 解压缩
+unzip rocketmq-all-4.9.2-bin-release.zip -d /usr/local/
+
+# 修改一下文件夹名，改成 rocketmq 方便使用
+mv /usr/local/rocketmq-4.9.2 /usr/local/rocketmq
+
+vim /etc/profile
+
+# 在文件末尾添加以下内容:
+export ROCKETMQ_HOME=/usr/local/rocketmq
+export PATH=$ROCKETMQ_HOME/bin:$PATH
+
+source /etc/profile
+```
+
+
+
+##  01 数据库安装与权限修改
 
 1. ping [www.baidu.com](http://www.baidu.com) 测试链接  ctrl+c停止
 2. yum  install mariadb-server   ——安装mariadb数据库（yum近似应用商店）
@@ -165,7 +217,7 @@ mv n.txt m.txt  修改文件名称
 
 注意 : Linux系统中的mysql必须以 ; 结尾
 
-## 02防火墙关闭
+## 02 防火墙关闭
 
 src目录下:
 
@@ -177,7 +229,7 @@ src目录下:
 
 ​                  ![img](https://docimg3.docs.qq.com/image/Pf87fYnuGAKiBfrdh8K4qg.png?w=623&h=474)         
 
-## 03后端项目发布
+## 03 后端项目发布
 
 ### Linux端JDK安装
 
@@ -231,6 +283,8 @@ export CLASSPATH=.:$JAVA_HOME/lib
 	 tail -f 8091.log  		动态查看
 
 例如：
+
+​	滚动动态查看日志   ==>   cat tail -f 2091.log
 
 ​        查看/etc/profile的前10行内容
 
@@ -331,7 +385,7 @@ ps -ef  |  grep java   查找java程序的运行信息，包含PID
 1. 将前端打包出的dist文件夹拷贝至Nginx根目录下
 2. 配置完成后，返回sbin目录下，启动 + 重启 Nginx （Linux系统无需担心重复启动问题）
 
-## 05修改HOSTS文件
+## 05 修改HOSTS文件
 
 ```
 #图片上传域名
@@ -352,4 +406,39 @@ ps -ef  |  grep java   查找java程序的运行信息，包含PID
 
 ## 修改图片上传的地址
 
-​                  ![img](https://docimg3.docs.qq.com/image/flj0sr-hCmKIXlhDLmlB6w.png?w=1142&h=376)         
+​                  ![img](https://docimg3.docs.qq.com/image/flj0sr-hCmKIXlhDLmlB6w.png?w=1142&h=376)    
+
+
+
+
+
+
+
+## yum商店镜像异常
+
+在Centos 8上需要使用yum命令,但执行yum命令时报错 No URLs in mirrorlist。经查阅资料后发现
+从2022年1月31日起，CentOS开发团队将会移除官方镜像源上关于CentOS 8所有的包，届时如果在CentOS 8上再次使用yum命令安装包则会报以下错误：下载元数据失败：Cannot prepare internal mirrorlist: No URLs in mirrorlist
+
+解决思路
+如果还需要继续使用Centos 8,则需更换下载源
+
+```
+解决方法
+直接运行命令——更换资源
+sudo sed -i -e "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
+
+
+缺少libpng12，更换资源后，安装
+yum -y install libpng12
+
+libnsl
+```
+
+
+
+## 运行.sh文件无权限
+
+```
+> chmod 777 xxx.sh
+```
+

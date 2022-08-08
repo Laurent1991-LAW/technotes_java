@@ -1,0 +1,54 @@
+
+
+=======
+
+firewall-cmd --state		查看防火墙状态
+
+systemctl disable firewalld.service	未来关闭防火墙的服务（查看状态依旧为running）
+
+systemctl stop firewalld.service 		关闭当前防火墙
+
+firewall-cmd --zone=public --add-port=7848/tcp --permanent		选择性开放端口
+
+firewall-cmd --reload
+
+========
+
+cp nginx.conf n.txt	  复制文件
+
+cp –R tomcat1 tomcat2        复制整个目录
+
+mv n.txt m.txt  修改文件名称(移动)
+
+
+=========
+
+cat -tail -f 文件名 ( 滚动查看 )
+
+=========
+
+vim/vi + 文件名
+
+- :q! 不保存退出 => 强制退出
+- :wq 保存退出
+- :/world 从当前光标处，向上查找world关键字
+- :?world 从当前光标处，向后查找world关键字
+
+=========
+
+tar -xvf nginx-1.21.3.tar.gz	解压缩文件
+
+
+==========
+
+线程
+
+ps -ef	查询所有进程
+
+ps -ef|grep XXX	查询某个进程
+
+kill pid号	一般类型杀死进程（不够强硬）
+
+kill -15 pid号		较为强硬的杀死
+
+kill -9 pid号 		强制杀死，后果自负
