@@ -237,7 +237,9 @@ public class OrderServiceImpl {
 
 
 
-**阿里巴巴规范：**需要在@Transactional指定rollbackfor，或者在方法中显式的rollback()
+### 1.4 阿里巴巴规范
+
+需要在@Transactional指定rollbackfor，或者在方法中显式的rollback()
 
 
 

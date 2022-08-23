@@ -1,0 +1,15 @@
+- Free Mybatis Plugin
+	Mapper和XML跳转
+	
+- findBUGS-IDEA
+	自动侦测Bug
+
+- Grep Console 
+	高亮显示warn/error等
+
+- RestfullToolKit
+
+- JsonParser
+
+- aiXcode & codota
+	自动完成代码块

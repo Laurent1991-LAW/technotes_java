@@ -2,12 +2,6 @@
 
 
 
-
-
-
-
-
-
 ## 哨兵配置
 
 **结构**：一主二从三哨兵
@@ -93,9 +87,9 @@ docker exec -it redis6381 redis-cli -p 6381
 在/opt文件中创建文件夹sentinel，内部创建哨兵配置文件 ：
 
 - sentinel monitor mymaster 192.168.64.150 6379 2" 中的mymaster为**自定义的主服务器名称**，末尾的 **2 表示两个哨兵投票确认主服务器宕机**，哨兵才会认为主服务器宕机；
-- down-after-milliseconds ：几毫秒后主服务器无心跳将被判定为主观下线；
+- down-after-milliseconds ：几毫秒后 主服务器无心跳 将被判定为主观下线；
 - failover-timeout：当进行failover时，配置所有slaves指向新的master所需的最大时间 ；
-- parallel-syncs：这个配置项指定了在发生failover主备切换时, 最多可以有多少个slave同时对新的master进行 同步，这个数字越小，完成failover所需的时间就越长，但是如果这个数字越大，就意味着越 多的slave因为复制replication而不可用。可以通过将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态。
+- parallel-syncs：这个配置项 指定了 在发生**failover主备切换**时, 最多可以有多少个slave同时对新的master进行 同步，这个数字越小，完成failover所需的时间就越长，但是如果这个数字越大，就意味着越 多的slave因为复制replication而不可用。可以通过**将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态**。
   
 
 ```

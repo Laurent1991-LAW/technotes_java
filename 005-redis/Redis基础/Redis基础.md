@@ -4,15 +4,24 @@
 
 ### 简介
 
-Redis在以前的版本中是单线程的，而在6.0后对Redis的io模型做了优化，io Thread为多线程的，但是worker Thread仍然是单线程。 
+- 为什么redis可以是单线程？—— 多线程是为了高效利用cpu进行计算而存在的，而redis作为内存型数据库，数据库记录的存取才是它关注的重点；
+- 单线程并不代表就慢， nginx 也是高性能单线程的代表；
+- Redis在以前的版本中是单线程的，而在6.0后对Redis的io模型做了优化，io Thread为多线程的，但是worker Thread仍然是单线程。 
 
 
 
 ### 使用场景
 
-- 缓存
-- 分布式session —— 单点登录系统 ： 单点登录中我们需要随机生成一个token作为key，将用户的信息转为json串作为value保存在redis中，同时设置一定的超时时间
+- **缓存**  : 首页变动不大的数据，比如树型商品分类 可存于缓存中；
+
+- **分布式session **：单点登录系统中我们需要随机生成一个token作为key，将用户的信息转为json串作为value保存在redis中，同时设置一定的超时时间；
+
+- **分布式ID、分布式锁**；
+
+  
+
 - 限流 : 次数统计，用户IP作为key，可投三次票，每次incr递增，满3次则返回false ;
+
 - 次数统计 : 
   - 点赞
     - 若不需要记录点赞用户信息，直接使用incr即可
@@ -22,14 +31,12 @@ Redis在以前的版本中是单线程的，而在6.0后对Redis的io模型做�
     - scard 微博id —— 点赞数
   - 打卡
   - 签到
-- 分布式锁
-- 生成全局ID
 
 
 
 ### 阿里巴巴规范
 
-- 以业务名(或数据库名)为前缀(防止key冲突)，用冒号分隔，比如`业务名:表名:id ` ；
+- 以业务名 (或数据库名) 为前缀(防止key冲突)，用冒号分隔，比如`业务名:表名:id ` ；
 - 非字符串的bigkey，不要使用del删除，使用hscan、sscan、zscan方式渐进式删除，同时要注意防止bigkey过期时间自动删除问题, 例如一个200万的zset设置1小时过期，会触发del操作，造成阻塞 ;
 - 实体类型, 要合理控制和使用数据结构内存编码优化配置, 例如使用压缩链表ziplist可以节省内存 ;
 - O(N)命令关注N的数量，例如hgetall、lrange、smembers、zrange、sinter等并非不能使用，但是需要明确N的值，有遍历的需求可以使用hscan、sscan、zscan代替；
@@ -50,15 +57,18 @@ Redis在以前的版本中是单线程的，而在6.0后对Redis的io模型做�
 
 根据自身业务类型，选好maxmemory-policy (最大内存淘汰策略)，设置好过期时间。
 
-默认策略是volatile-lru，即超过最大内存后，**在过期键中使用lru算法进行key的剔除，保证不过期数据不被删除**，但是可能会出现OOM问题。
+**默认策略是volatile-lru**，即超过最大内存后，**在过期键中使用lru算法进行key的剔除，保证不过期数据不被删除**，但是可能会出现OOM问题。
 
 其他策略如下：
 
-- allkeys-lru：根据LRU算法删除键，不管数据有没有设置超时属性，直到腾出足够空间为止。
-- allkeys-random：随机删除所有键，直到腾出足够空间为止。
-- volatile-random:随机删除过期键，直到腾出足够空间为止。
-- volatile-ttl：根据键值对象的ttl属性，删除最近将要过期数据。如果没有，回退到noeviction策略。
-- noeviction：不会剔除任何数据，拒绝所有写入操作并返回客户端错误信息"(error) OOM command not allowed when used memory"，此时Redis只响应读操作。
+|      策略       | 执行过程                                                     |
+| :-------------: | ------------------------------------------------------------ |
+|  volatile-lru   | 从设置了过期时间的数据集里，删除最近 最少使用的键，直到腾出足够空间为止 |
+|  volatile-ttl   | 从设置了过期时间的数据集里，删除最近 将要过期数据。如果没有，回退到noeviction策略 |
+| volatile-random | 从设置了过期时间的数据集里，随机删除过期键，直到腾出足够空间为止 |
+|   allkeys-lru   | 根据LRU算法删除键，不管数据有没有设置超时属性，直到腾出足够空间为止 |
+| allkeys-random  | 随机删除所有键，直到腾出足够空间为止。                       |
+|   no-eviction   | 不会剔除任何数据，拒绝所有写入操作并返回客户端错误信息"(error) OOM command not allowed when used memory"，此时Redis只响应读操作。 |
 
 **备注：** > ttl [key name] 返回key剩余的过期时间
 
@@ -68,21 +78,31 @@ Redis在以前的版本中是单线程的，而在6.0后对Redis的io模型做�
 
 ### 指令数据类型和主要指令
 
+
+
 > String
 
 **常用命令** ：set/get/decr/incr/mget等；
+
+
 
 > Hash
 
 **常用命令** ：hget/hset/hgetall等
 
+
+
 > List
 
 **常用命令** ：lpush / rpush / lpop / rpop / lrange遍历等；
 
+
+
 > Set
 
 **常用命令** ：sadd / spop / smembers / sunion等；
+
+
 
 > Sorted Set
 
@@ -167,7 +187,7 @@ redis> georadius cities:locs 115.03 38.44 200 km WITHCOORD WITHDIST ASC
 
 **1-JdkSerializationRedisSerializer : Bean必须实现序列化接口**
 
-否则将爆序列化java对象时如下报错：
+否则将 序列化java对象 时如下报错：
 
 ```
 DefaultSerializer requires a Serializable payload but received an object of type [com.everestfortune.cf.bean.CaseInfoBean]
@@ -378,7 +398,9 @@ Redis本身是一种内存性数据库，读写快优势所在，但为了防止
 
 
 
-### Redis缓存雪崩 / 击穿
+### Redis缓存穿透 / 雪崩 / 击穿
+
+**缓存穿透**：持续查询一个数据库不存在的数据，因为数据不存在则也不会添加到缓存，持续地请求直接打在数据库上 ---> 解决办法 为 为空数据建缓存，设置过期时间；
 
 **缓存雪崩** : 大量缓存key在某一刻集中失效，外加巨大的QPS，大量请求直接冲击数据库 ;
 
@@ -441,8 +463,6 @@ redis 是纯纯的内存数据库。
 
 
 
-
-
 ### Redis事务
 
 
@@ -463,14 +483,14 @@ redis 是纯纯的内存数据库。
 
 在单体的应用开发场景中，在多线程的环境下，涉及并发同步的时候，为了保证一个代码块在同一时间只能由一个线程访问，我们一般可以**使用synchronized语法和ReetrantLock去保证，这实际上是本地锁的方式**。
 
-也就是说，在同一个JVM内部，大家往往采用synchronized或者Lock的方式来解决多线程间的安全问题。但**在分布式集群工作的开发场景中**，在JVM之间，那么就需要一种更加高级的锁机制，来处理种跨JVM进程之间的线程安全问题
+也就是说，在同一个JVM内部，大家往往采用synchronized或者Lock的方式来解决多线程间的安全问题。但**在分布式集群工作的开发场景中**，在JVM之间，那么就需要一种更加高级的锁机制，来处理种**跨JVM进程之间的线程安全问题**
 ![20210505213026273](E:\doc_repo\002-应用\images\20210505213026273.png)
 
 
 
-**用途** : 实现一个简单的秒杀系统的库存扣减 
+**用途** : 实现一个简单的 秒杀系统 的库存扣减 
 
-**逻辑** : 在线程A通过setnx尝试去获取到抢购对象produce对象的锁，若是获取成功旧会返回1，获取不成功，说明当前对象的锁已经被其它线程锁持有 ; 获取锁成功后并设置key的生存时间，能够有效的防止出现死锁，最后就是通过`del`来实现删除key，这样其它的线程就也可以获取到这个对象的锁。
+**逻辑** : 在 线程A通过setnx 尝试去获取到抢购对象produce对象的锁，若是获取成功旧会返回1，获取不成功，说明当前对象的锁 已经被 其它线程锁持有 ; 获取锁成功后 并 **设置key的生存时间，能够有效的防止出现死锁**，最后就是通过`del`来实现删除key，这样其它的线程就也可以获取到这个对象的锁。
 
 
 
@@ -491,12 +511,12 @@ public void redis(Produce produce) {
     	Long result= RedisUtil.setnx(produce.getId(), 
                                      String.valueOf(System.currentTimeMillis() + timeout));
     
-        if (result!= null && result.intValue() == 1) { // 返回1表示成功获取到锁
-         RedisUtil.expire(produce.getId(), 10);  // 有效期为10秒，防止死锁
-         //执行业务操作
-         ......
-         //执行完业务后，释放锁
-         RedisUtil.del(produce.getId());
+        if ( result != null && result.intValue() == 1) { // 返回1表示成功获取到锁
+             RedisUtil.expire(produce.getId(), 10);  // 有效期为10秒，防止死锁
+             //执行业务操作
+             ......
+             //执行完业务后，释放锁
+             RedisUtil.del(produce.getId());
         } else {
            System.println.out("没有获取到锁")
         }
@@ -505,11 +525,13 @@ public void redis(Produce produce) {
 
 
 
-**潜在问题** : 执行完setnx成功后设置生存时间不生效，此时服务器宕机，那么key就会一直存在Redis中, 一旦出现了释放锁失败，或者没有手工释放，那么这个锁永远被占用，其他线程永远也抢不到锁, 所以, 需要**保障setnx和expire两个操作的原子性**，要么全部执行，要么全部不执行，二者不能分开。 
+**潜在问题** : 执行完setnx成功后，设置生存时间不生效，此时服务器宕机，那么key就会一直存在Redis中, 一旦出现了释放锁失败，或者没有手工释放，那么这个锁永远被占用，其他线程永远也抢不到锁, 所以, 需要**保障setnx和expire两个操作的原子性**，要么全部执行，要么全部不执行，二者不能分开。 
+
+
 
 **解决办法** : 
 
-1. 使用set的命令时，同时设置过期时间，不再单独使用 expire命令, 如 :  set test "111" EX 100 NX
+1. 使用set的命令时，同时设置过期时间，不再单独使用 expire命令, 如 :  set test "111" EX 10 NX
 
    > set 命令的完整格式： 
    >
@@ -517,9 +539,9 @@ public void redis(Produce produce) {
    >
    > 
    >
-   > EX seconds：设置失效时长，单位秒 
+   > EX seconds：设置失效时长，单位 秒 
    >
-   > PX milliseconds：设置失效时长，单位毫秒 
+   > PX milliseconds：设置失效时长，单位 毫秒 
    >
    > NX：key不存在时设置value，成功返回OK，失败返回(nil) 
    >
@@ -531,7 +553,7 @@ public void redis(Produce produce) {
 
 
 
-最后, Redis实现分布式锁，还可以使用`Redisson`来实现, 开箱即用
+最后, Redis实现分布式锁，还可以使用Redisson来实现, 开箱即用
 
 **关键** : Redisson分布式锁的框架主要的学习分为下面的5个点
 

@@ -2,7 +2,7 @@
 
 
 
-## 集群配置
+## 一、集群配置
 
 ### 集群方案
 
@@ -37,7 +37,7 @@
 
 
 
-## 配置文件与启动
+## 二、配置文件与启动
 
 ### 准备工作
 
@@ -117,6 +117,9 @@ storePathCommitLog=/usr/local/rocketmq/store/broker-as/commitlog
   - **-c参数**：指定配置文件，使用指定的配置文件启动 broker
 
 ```shell
+# 进入根目录，cd $ROCKETMQ_HOME, 启动命名服务器
+nohup sh bin/mqnamesrv &
+
 # 控制台启动
 nohup java -jar rocketmq-console-ng-1.0.1.jar \
 --server.port=8080 \
@@ -155,7 +158,7 @@ nohup sh mqbroker \
 
 
 
-## 操作步骤
+## 三、操作步骤
 
 ### topic创建
 
@@ -199,8 +202,6 @@ nohup sh mqbroker \
 
 
 
-## 发送方式
-
 ### 原生API实现差异
 
 
@@ -209,7 +210,7 @@ nohup sh mqbroker \
 
 
 
-**异步消息**：producer.send() 需要传入message对象 及 new SendCallback() 回调对象 —— 重写内部的处理成功 onSuccess() 与出错如何处理 onThrowable() ；
+**异步消息**：producer.send() 需要传入message对象 及 new SendCallback() 回调对象 —— 重写**内部的处理成功 onSuccess() 与出错如何处理 onThrowable()** ；
 
 
 
@@ -246,23 +247,81 @@ SendResult r = p.send(msg, new MessageQueueSelector() {
 
 
 
+**事务消息**：
+
+- 创建TransactionMQProducer ；
+- producer.setTransactionListener() 设置事务监听器，传入的TransactionListener重写两个方法：
+  - 本地事务执行 executeLocalTransaction()，根据执行情况返回枚举值LocalTransactionState：
+    - COMMIT_MESSAGE
+    - ROLLBACK_MESSAGE
+    - UNKNOW
+  - 回查方式 checkLocalTransaction
 
 
 
+### 参数与属性
+
+> **生产方 + 消费方**
+
+**setNamesrvAddr();**
+
+**start();**
+
+
+
+> **生产者**
+
+**Message对象三参数：**topic 、 tag、 byte[]格式的消息；
+
+**send() 参数：**
+
+- 同步消息、延时消息：message；
+- 异步消息：message + sendCallBack() 回调函数；
+- 顺序消息：message + MessageQueueSelector对象，内部重写select方法 + 选择依据Object，如OrderId
+
+
+
+> **消费者**
+
+**subscribe() ：**
+
+- topic + tag (可有多个)，如 `consumer.subscribe("Topic1", "TagA || TagB || TagC");`
+- topic + MessageSelector；
+
+**consumer.registerMessageListener()**：
+
+​	MessageListener接口两种实现 :
+
+- MessageListener**Concurrently**，需返回ConsumeConcurrentlyStatus，保证消费成功 或 consume later；
+
+- MessageListener**Orderly**，需返回ConsumeOrderlyStatus，保证消费成功 或 suspend current queue a moment；
+
+
+
+
+
+### 消息自定义属性
+
+```java
+// 生产方
+msg.putUserProperty("prop1", "1");
+msg.putUserProperty("prop2", "2");
+
+// 消费方
+consumer.subscribe("Topic7", MessageSelector.bySql("prop1=1 or prop2=2"));
+```
+
+
+
+
+
+## 四、消息类型
 
 
 
 ### 同步消息
 
 **概念：**发送端在发送消息时，**阻塞线程进行等待，直到服务器返回发送的结果，** 适用于对消息可靠性要求比较高的项目。发送端如果需要保证消息的可靠性，防止消息发送失败，可以采用同步阻塞式的发送，然后同步检查Brocker返回的状态来判断消息是否持久化成功。如果发送超时或者失败，则会默认重试2次，RocketMQ选择至少传输成功一次的消息模型
-
- 
-
- 
-
- 
-
- 
 
  
 
@@ -311,7 +370,7 @@ SendResult r = p.send(msg, new MessageQueueSelector() {
 
 ### 顺序消息
 
-以订单为例 ：一个订单的顺序流程是：创建、付款、推送、完成。带有一个订单号的消息 会被 先后发送 到 同一个队列中。消费时，从同一个队列接收同一个订单的消息。
+以订单为例，一个订单的顺序流程是：创建、付款、推送、完成。带有一个订单号的消息 会被 先后发送 到 同一个队列中。消费时，从同一个队列接收同一个订单的消息。
 
 ![20200715180447730](E:\doc_repo\005-MQ\RocketMQ\images\20200715180447730.png)
 
@@ -319,13 +378,32 @@ SendResult r = p.send(msg, new MessageQueueSelector() {
 
 
 
+### 事务消息
+
+
+
+**流程：**
+
+1. 发送半消息（半消息不会发送给消费者）；
+2. 执行本地事务；
+3. 事务成功提交消息 或 事务失败回滚消息；
+
+
+
+> **Producer ----1----> MQ ----2----> Consumer **
+
+1. 若P没向MQ发送回滚或提交操作，MQ会向P**回查**——每隔1分钟询问事务执行情况；
+2. MQ向C有消息自动重发机制，在绝大多数情况下，都可以保证消息被正确消费，即使最终失败也可**由人工处理进行托底**。
+
+ ![无标题](E:\doc_repo\005-MQ\RocketMQ\images\无标题.png)
 
 
 
 
-## 常见问题
 
-### 服务器分类与功能
+## 五、常见问题
+
+### RocketMQ服务器分类与功能是什么？
 
 > nameserver 
 
@@ -344,17 +422,37 @@ SendResult r = p.send(msg, new MessageQueueSelector() {
 
 
 
-### 消息重试与死信队列
+### 消息重试与死信队列是什么？
 
-消费者从RocketMQ拉取到消息之后，需要返回消费成功来表示业务方正常消费完成。因此只有返回CONSUME_SUCCESS才算消费完成，如果返回CONSUME_LATER则会按照不同的messageDelayLevel时间进行再次消费，时间分级从秒到小时，最长时间为2个小时后再次进行消费重试，如果消费满16次之后还是未能消费成功，则不再重试，会将消息发送到死信队列，从而保证消息存储的可靠性。
+消费者从RocketMQ拉取到消息之后，需要返回消费成功来表示业务方正常消费完成。因此只有返回 CONSUME_SUCCESS 才算消费完成，如果返回 CONSUME_LATER 则会按照不同的 messageDelayLevel 时间进行再次消费，时间分级从秒到小时，最长时间为2个小时后再次进行消费重试，如果**消费满16次之后**还是未能消费成功，则不再重试，会将消息发送到死信队列，从而保证消息存储的可靠性。
 
 未能成功消费的消息，消息队列并不会立刻将消息丢弃，而是将消息发送到死信队列，其名称是在原队列名称前加%DLQ%，如果消息最终进入了死信队列，则可以通过RocketMQ提供的相关接口从死信队列获取到相应的消息，保证了消息消费的可靠性。 
 
  
 
- 
+
+
+### 使用过RocketMQ的事务消息吗？
+
+
+
+
+
+###  延时队列如何实现 ？
+
+
+
+
+
+### 顺序队列使用在什么场景中 ？
 
  
 
- 
+### 消息积压如何解决？
+
+
+
+
+
+### RocketMQ如何保证消息可靠性？
 

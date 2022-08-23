@@ -1,0 +1,38 @@
+// ---- 每行字数限制 ---
+Editor - Code style - Java -> 
+hard wrap at 	字数 
+wrap on typing  	yes
+visual guides	100
+Ensure right margin is not  exceeded	yes
+
+// ---- 自动清理无用import ----
+General  - >   auto-import  - >   optimize imports on the fly
+
+// ---- 滚动改变字体大小 ----
+Editor - general - change font size with ctrl+mouse wheet
+
+// ---- 去除大小写匹配 ----
+Editor - general - code completion - Math case 去除选中
+
+// ---- 设置方法参数自动提示 ----
+Editor - general - code completion - parameter info -> 三个都选中（1000ms即可）
+
+// ---- 设置编码 ----
+Editor - file encoding -> 以下均设置为utf-8
+global encoding
+project encoding
+default encoding for properties files
+
+// ---- 实现自动编译 ----
+Build, execution, deployment - compile ->
+build project automatically 
+compile indenpendant modules in paralle 
+
+// ---- 清除缓存 ----
+File - invalidates Caches
+
+
+
+
+
+
