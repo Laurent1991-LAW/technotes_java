@@ -7,14 +7,27 @@ F4	从usage界面跳到该类
 
 Ctrl + H	查看继承/实现情况
 
-ctrl + alt + L	整理代码
-
 shift + alt + F12	查看类结构structure
+
+ctrl + alt + L	整理代码
 
 ctrl + alt + 左/右	跳到上/下一个操作位置
 
 ctrl + alt + o	快速删除无用的import
 
+alt + insert	生成构造器
+
+ctrl + home	定位到一页页头
+
+ctrl + end 	定位到一页页末
+
+ctrl + D  		 复制一行内容
+
+ctrl + Y		删除当前行
+
+shift + alt + 上/下	  一行代码上/下移动
+
+光标在某一行 + home + shift + end	选定某一行
 
 -------------ECLIPSE-------------------------
 

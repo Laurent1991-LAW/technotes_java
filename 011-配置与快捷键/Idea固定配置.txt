@@ -1,15 +1,16 @@
-// ---- 每行字数限制 ---
+ // ---- 每行字数限制 ---
 Editor - Code style - Java -> 
 hard wrap at 	字数 
 wrap on typing  	yes
 visual guides	100
 Ensure right margin is not  exceeded	yes
 
-// ---- 自动清理无用import ----
-General  - >   auto-import  - >   optimize imports on the fly
 
-// ---- 滚动改变字体大小 ----
-Editor - general - change font size with ctrl+mouse wheet
+// ---- 禁止拖动移动文件 ----
+appearance -> UI options ->Drag-n-Drop with ALT pressed only
+
+// ---- 更小的缩进  ----
+appearance -> UI options ->  Use smaller indents in trees
 
 // ---- 去除大小写匹配 ----
 Editor - general - code completion - Math case 去除选中
@@ -17,22 +18,56 @@ Editor - general - code completion - Math case 去除选中
 // ---- 设置方法参数自动提示 ----
 Editor - general - code completion - parameter info -> 三个都选中（1000ms即可）
 
+// ---- 去除import * ----
+editors -> code style -> imports ->
+class count to use import with 数值改大
+names count to use static import with * 数值改大
+取消选择下方的 import java.awt.*
+
+// ---- 自动添加 清理无用import -----
+editors -> general -> auto import ->
+add unambiguous imports on the fly 
+optimize imports on the fly (慎用: 避免git push时格式整理) 
+
+
+// ---- 滚动改变字体大小 ----
+Editor - general - change font size with ctrl+mouse wheet
+
+
+// ---- 多行显示窗口缩略图 ----
+Editor -> general -> Editor tabs -> 取消选中 show tabs in one row 
+Closing Policy -> Tab Limit : 20 
+
 // ---- 设置编码 ----
 Editor - file encoding -> 以下均设置为utf-8
 global encoding
 project encoding
 default encoding for properties files
 
+
 // ---- 实现自动编译 ----
 Build, execution, deployment - compile ->
 build project automatically 
 compile indenpendant modules in paralle 
 
+// ----自动导入Maven依赖 ----
+importing -> import maven projects automatically
+JDK for importer -> 选中安装的JDK
+
+
 // ---- 清除缓存 ----
 File - invalidates Caches
 
 
+// --- 搜索 ---
 
+页面中 : ctrl + F
+
+项目中文件名 : shift x 2
+
+项目中搜索中文 (含页面内内容) : shift + ctrl + F ( 需在设置中开启Find in path )
+-> 勾选Regex -> 搜索框中输入 [\u4e00-\u9fa5] 将搜索出所有中文, 可在其后紧随中文关键字, 如[\u4e00-\u9fa5]加密
+-> 不勾选Regex -> 搜索框中输入 [\u4e00-\u9fa5] 将搜索出 "[\u4e00-\u9fa5]"
 
 
 
