@@ -1,0 +1,21 @@
+
+
+redis	6379
+
+mysql	3306
+
+oracle	1521
+
+nacos	8848
+
+sentinel	8180
+
+eureka	8761      ( 可视化界面为服务器url + \eureka，比如http://eureka8761:8761/eureka )
+
+ES
+
+RabbitMQ		
+
+http	80
+https	443
+tomcat	8080
