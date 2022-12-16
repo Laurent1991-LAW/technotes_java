@@ -59,7 +59,7 @@ Build, execution, deployment ->
 JAVA compiler -> 
 Eclipse
 
-// --- 设置Eclipse编译 ---
+// --- 取消Mapper接口文件@autowire报错 ---
 Editor ->
 inspections ->
 右边搜索 autowiring for Bean class ->
