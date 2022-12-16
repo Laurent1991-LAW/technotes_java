@@ -5,7 +5,6 @@ wrap on typing  	yes
 visual guides	100
 Ensure right margin is not  exceeded	yes
 
-
 // ---- 禁止拖动移动文件 ----
 appearance -> UI options ->Drag-n-Drop with ALT pressed only
 
@@ -29,10 +28,8 @@ editors -> general -> auto import ->
 add unambiguous imports on the fly 
 optimize imports on the fly (慎用: 避免git push时格式整理) 
 
-
 // ---- 滚动改变字体大小 ----
 Editor - general - change font size with ctrl+mouse wheet
-
 
 // ---- 多行显示窗口缩略图 ----
 Editor -> general -> Editor tabs -> 取消选中 show tabs in one row 
@@ -44,7 +41,6 @@ global encoding
 project encoding
 default encoding for properties files
 
-
 // ---- 实现自动编译 ----
 Build, execution, deployment - compile ->
 build project automatically 
@@ -54,10 +50,20 @@ compile indenpendant modules in paralle
 importing -> import maven projects automatically
 JDK for importer -> 选中安装的JDK
 
-
 // ---- 清除缓存 ----
 File - invalidates Caches
 
+// --- 设置Eclipse编译 ---
+Build, execution, deployment -> 
+ compiler ->
+JAVA compiler -> 
+Eclipse
+
+// --- 设置Eclipse编译 ---
+Editor ->
+inspections ->
+右边搜索 autowiring for Bean class ->
+取消选中
 
 // --- 搜索 ---
 
