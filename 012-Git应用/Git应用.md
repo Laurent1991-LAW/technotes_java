@@ -121,7 +121,7 @@ revert将保留C2的提交记录，若远程有C2提交，则C2'可以与之合�
 
 \# git rebase C3
 
-![Snipaste_2022-06-04_17-23-31](E:\doc_repo\012-Git应用\images\Snipaste_2022-06-04_17-23-31.png)
+![Snipaste_2022-06-04_17-23-31](.\images\Snipaste_2022-06-04_17-23-31.png)
 
 
 
@@ -188,4 +188,17 @@ $ git stash show
 $ git stash show stash@{1} —— 查看指定的stash和当前目录差异
 $ git stash show stash@{1} -p	—— 查看详细差异
 ```
+
+
+
+#### 编码设为utf-8
+
+```
+git config --global core.quotepath false
+git config --global gui.encoding utf-8
+git config --global i18n.commit.encoding utf-8
+git config --global i18n.logoutputencoding utf-8
+```
+
+
 
